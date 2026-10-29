@@ -1,5 +1,7 @@
 import copy
+import contextlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -47,7 +49,8 @@ class Tests(unittest.TestCase):
         with patch.object(m, 'ROOT', self.root), patch.dict(os.environ, ENV, clear=True), \
              patch.object(m, 'docker', kwargs.get('docker', self.docker)), \
              patch.object(m, 'inspect', return_value=kwargs.get('image', {'Id': IMAGE_ID})), \
-             patch.object(m, 'read_report', return_value=kwargs.get('report', REPORT)):
+             patch.object(m, 'read_report', return_value=kwargs.get('report', REPORT)), \
+             contextlib.redirect_stdout(io.StringIO()):
             m.publish()
 
     def test_real_compatibility_and_geometry_requirements(self):
